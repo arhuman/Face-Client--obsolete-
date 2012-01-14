@@ -1,0 +1,26 @@
+---
+abstract: 'The great new Face::Client!'
+author:
+  - 'Arnaud (Arhuman) ASSAD <arhuman@gmail.com>'
+build_requires:
+  JSON: 0
+  REST::Client: 0
+  Test::More: 0
+configure_requires:
+  Module::Build: 0.36
+dynamic_config: 0
+generated_by: 'Module::Build version 0.3603'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Face-Client
+provides:
+  Face::Client:
+    file: lib/Face/Client.pm
+    version: 0.01
+requires:
+  perl: 5.006
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.01
