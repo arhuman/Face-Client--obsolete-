@@ -19,12 +19,9 @@ isa_ok($client, 'Face::Client');
 # Check for lowlevel API methods availability
 can_ok ($client, "faces_detect");
 my @tags = $client->faces_detect(urls => "http://face.com/img/faces-of-the-festival-no-countries.jpg");
-#diag(Dumper($client->{response}));
-diag("XXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-diag(Dumper(\@tags));
-diag("YYYYYYYYYYYYYYYYYYYYYYYYYYYY");
 for my $tag (@tags) {
-    #diag(Dumper($tag));
+    diag("TAG");
+    diag(Dumper($tag));
     isa_ok($tag, 'Face::Client::Response::Tag');
     can_ok ($tag, "width");
     #diag($tag->width);
@@ -57,7 +54,7 @@ for my $tag (@tags) {
     can_ok ($tag, "smiling");
     diag($tag->smiling);
     can_ok ($tag, "mood");
-    diag($tag->modd);
+    diag($tag->mood);
     can_ok ($tag, "lips");
     diag($tag->lips);
     can_ok ($tag, "face");

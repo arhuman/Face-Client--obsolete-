@@ -89,15 +89,12 @@ sub faces_detect {
     my %params = @_;
 
     my $parameters = '';
-    my @tags;
 
     for my $key (keys %params) {
         $parameters .= "&$key=".$params{$key};
     }
     
-    $self->_process_response('GET',"/faces/detect.json?".$self->_get_url().$parameters);
-
-    return @tags;
+    return $self->_process_response('GET',"/faces/detect.json?".$self->_get_url().$parameters);
 }
 
 =head2 _get_url
@@ -131,8 +128,10 @@ sub _process_response {
 
     for my $tag (@{$response->{photos}[0]{tags}}) {
         push @tags, Face::Client::Response::Tag->new($tag);
+#        push @{$self->{ADEBUG}}, {X => Face::Client::Response::Tag->new($tag)};
     }
 
+    @{$self->{ADEBUG}} = @tags;
     return @tags;
 }
 

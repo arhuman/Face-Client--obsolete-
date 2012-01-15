@@ -51,6 +51,247 @@ sub new {
     return bless($self, $class);
 }
 
+
+=head2 width
+
+Getter for the width attribute
+
+=cut
+
+sub width {
+    my $self = shift;
+
+    return $self->{'width'};
+}
+
+=head2 height
+
+Getter for the height attribute
+
+=cut
+
+sub height {
+    my $self = shift;
+
+    return $self->{'height'};
+}
+
+=head2 center
+
+Getter for the center attribute
+
+=cut
+
+sub center {
+    my $self = shift;
+
+    return $self->{'center'};
+}
+
+=head2 eye_left
+
+Getter for the eye_left attribute
+
+=cut
+
+sub eye_left {
+    my $self = shift;
+
+    return $self->{'eye_left'};
+}
+
+=head2 eye_right
+
+Getter for the eye_right attribute
+
+=cut
+
+sub eye_right {
+    my $self = shift;
+
+    return $self->{'eye_right'};
+}
+
+=head2 mouth_left
+
+Getter for the mouth_left attribute
+
+=cut
+
+sub mouth_left {
+    my $self = shift;
+
+    return $self->{'mouth_left'};
+}
+
+=head2 mouth_center
+
+Getter for the mouth_center attribute
+
+=cut
+
+sub mouth_center {
+    my $self = shift;
+
+    return $self->{'mouth_center'};
+}
+
+=head2 mouth_right
+
+Getter for the mouth_right attribute
+
+=cut
+
+sub mouth_right {
+    my $self = shift;
+
+    return $self->{'mouth_right'};
+}
+
+=head2 nose
+
+Getter for the nose attribute
+
+=cut
+
+sub nose {
+    my $self = shift;
+
+    return $self->{'nose'};
+}
+
+=head2 yaw
+
+Getter for the yaw attribute
+
+=cut
+
+sub yaw {
+    my $self = shift;
+
+    return $self->{'yaw'};
+}
+
+
+=head2 pitch
+
+Getter for the pitch attribute
+
+=cut
+
+sub pitch {
+    my $self = shift;
+
+    return $self->{'pitch'};
+}
+
+
+=head2 roll
+
+Getter for the roll attribute
+
+=cut
+
+sub roll {
+    my $self = shift;
+
+    return $self->{'roll'};
+}
+
+
+=head2 attributes
+
+Getter for the attributes attribute
+
+=cut
+
+sub attributes {
+    my $self = shift;
+
+    return $self->{'attributes'};
+}
+
+
+=head2 gender
+
+Getter for the gender attribute
+
+=cut
+
+sub gender {
+    my $self = shift;
+
+    return $self->{'gender'};
+}
+
+
+=head2 glasses
+
+Getter for the glasses attribute
+
+=cut
+
+sub glasses {
+    my $self = shift;
+
+    return $self->{'glasses'};
+}
+
+
+=head2 smiling
+
+Getter for the smiling attribute
+
+=cut
+
+sub smiling {
+    my $self = shift;
+
+    return $self->{'smiling'};
+}
+
+
+
+
+=head2 mood
+
+Getter for the mood attribute
+
+=cut
+
+sub mood {
+    my $self = shift;
+
+    return $self->{'mood'};
+}
+
+
+=head2 lips
+
+Getter for the lips attribute
+
+=cut
+
+sub lips {
+    my $self = shift;
+
+    return $self->{'lips'};
+}
+
+
+=head2 face
+
+Getter for the face attribute
+
+=cut
+
+sub face {
+    my $self = shift;
+
+    return $self->{'face'};
+}
+
+
 =head1 AUTHOR
 
 Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>

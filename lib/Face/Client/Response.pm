@@ -270,26 +270,6 @@ sub manual {
     return $self->{'manual'};
 }
 
-=head2 aa
-
-Getter for the aa attribute
-
-=cut
-
-=head2 function1
-
-=cut
-
-sub function1 {
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
-}
-
 =head1 AUTHOR
 
 Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
