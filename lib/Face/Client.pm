@@ -66,7 +66,8 @@ sub new {
         return undef;
     }
 
-    die "No API credentials provided" unless $self->{api_key} and $self->{api_secret};
+    die "No API credentials provided"
+      unless $self->{api_key} and $self->{api_secret};
 
     $self->{rest} = REST::Client->new();
 
@@ -74,8 +75,8 @@ sub new {
     $self->{rest}->setFollow(1);
     $self->{rest}->setHost( $self->{server} );
 
-#        $self->set_header(Authorization => "Basic $creds");
-#        $self->set_header(Accept => "application/json");
+    #        $self->set_header(Authorization => "Basic $creds");
+    #        $self->set_header(Accept => "application/json");
 
     return $self;
 }
@@ -85,16 +86,179 @@ sub new {
 =cut
 
 sub faces_detect {
-    my $self  = shift;
+    my $self   = shift;
     my %params = @_;
 
     my $parameters = '';
 
-    for my $key (keys %params) {
-        $parameters .= "&$key=".$params{$key};
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
     }
-    
-    return $self->_process_response('GET',"/faces/detect.json?".$self->_get_url().$parameters);
+
+    return $self->_process_response( 'GET',
+        "/faces/detect.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 faces_train
+
+=cut
+
+sub faces_train {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/faces/train.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 faces_recognize
+
+=cut
+
+sub faces_recognize {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/faces/recognize.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 faces_status
+
+=cut
+
+sub faces_status {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/faces/status.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 tags_add
+
+=cut
+
+sub tags_add {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/tags/add.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 tags_remove
+
+=cut
+
+sub tags_remove {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/tags/remove.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 tags_get
+
+=cut
+
+sub tags_get {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/tags/get.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 tags_save
+
+=cut
+
+sub tags_save {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/tags/save.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 account_limits
+
+=cut
+
+sub account_limits {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/accounts/limits.json?" . $self->_get_url() . $parameters );
+}
+
+=head2 account_users
+
+=cut
+
+sub account_users {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    return $self->_process_response( 'GET',
+        "/tags/add.json?" . $self->_get_url() . $parameters );
 }
 
 =head2 _get_url
@@ -102,9 +266,13 @@ sub faces_detect {
 =cut
 
 sub _get_url {
-    my $self  = shift;
+    my $self = shift;
 
-    return "&api_key=".$self->{api_key}."&api_secret=".$self->{api_secret};
+    return
+        "&api_key="
+      . $self->{api_key}
+      . "&api_secret="
+      . $self->{api_secret};
 }
 
 =head2 _process_response
@@ -112,26 +280,27 @@ sub _get_url {
 =cut
 
 sub _process_response {
-    my $self  = shift;
-    my $method  = shift;
-    my $url  = shift;
+    my $self   = shift;
+    my $method = shift;
+    my $url    = shift;
 
     my @tags;
 
-    if ($method eq 'GET') {
-    $self->{rest}->GET($url);
+    if ( $method eq 'GET' ) {
+        $self->{rest}->GET($url);
     }
 
-    my $response = decode_json($self->{rest}->responseContent);
+    my $response = decode_json( $self->{rest}->responseContent );
 
     $self->{response} = Face::Client::Response->new(%$response);
 
-    for my $tag (@{$response->{photos}[0]{tags}}) {
+    for my $tag ( @{ $response->{photos}[0]{tags} } ) {
         push @tags, Face::Client::Response::Tag->new($tag);
+
 #        push @{$self->{ADEBUG}}, {X => Face::Client::Response::Tag->new($tag)};
     }
 
-    @{$self->{ADEBUG}} = @tags;
+    @{ $self->{ADEBUG} } = @tags;
     return @tags;
 }
 
@@ -140,7 +309,7 @@ sub _process_response {
 =cut
 
 sub response {
-    my $self  = shift;
+    my $self = shift;
 
     return $self->{response};
 }
