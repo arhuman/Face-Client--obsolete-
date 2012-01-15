@@ -14,7 +14,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0_01';
 
 =head1 SYNOPSIS
 
@@ -40,23 +40,15 @@ if you don't export anything, such as for a purely object-oriented module.
 
 sub new {
     my $class  = shift;
-    my %params = @_;
+    my $params = shift;
 
     my $self = {};
 
-    for my $key ( keys %params ) {
-        $self->{$key} = $params{$key};
-
+    for my $key ( keys %$params ) {
+        $self->{$key} = $params->{$key};
     }
 
-    return bless $self, $class;
-}
-
-=head2 function2
-
-=cut
-
-sub function2 {
+    return bless($self, $class);
 }
 
 =head1 AUTHOR

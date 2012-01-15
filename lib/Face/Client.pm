@@ -5,13 +5,14 @@ use strict;
 use warnings;
 use Carp;
 
+use Face::Client::Response;
 use Face::Client::Response::Tag;
 use JSON;
 use REST::Client;
 
 =head1 NAME
 
-Face::Client - The great new Face::Client!
+Face::Client - Client to the Face.com REST API
 
 =head1 VERSION
 
@@ -19,11 +20,11 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0_01';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+Face::Client encapsulates Face.com REST API.
 
 Perhaps a little code snippet.
 
@@ -38,13 +39,6 @@ A list of functions that can be exported.  You can delete this section
 if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
-
-=head2 function1
-
-=cut
-
-sub function1 {
-}
 
 =head2 new
 
@@ -72,6 +66,8 @@ sub new {
         return undef;
     }
 
+    die "No API credentials provided" unless $self->{api_key} and $self->{api_secret};
+
     $self->{rest} = REST::Client->new();
 
     # Automatically follow redirect
@@ -93,14 +89,15 @@ sub faces_detect {
     my %params = @_;
 
     my $parameters = '';
+    my @tags;
 
     for my $key (keys %params) {
         $parameters .= "&$key=".$params{$key};
     }
     
-    $self->{rest}->GET($self->{server}."/faces/detect.json?".$self->_get_url().$parameters);
+    $self->_process_response('GET',"/faces/detect.json?".$self->_get_url().$parameters);
 
-    return Face::Client::Response::Tag->new(decode_json($self->{rest}->responseContent));
+    return @tags;
 }
 
 =head2 _get_url
@@ -113,6 +110,42 @@ sub _get_url {
     return "&api_key=".$self->{api_key}."&api_secret=".$self->{api_secret};
 }
 
+=head2 _process_response
+
+=cut
+
+sub _process_response {
+    my $self  = shift;
+    my $method  = shift;
+    my $url  = shift;
+
+    my @tags;
+
+    if ($method eq 'GET') {
+    $self->{rest}->GET($url);
+    }
+
+    my $response = decode_json($self->{rest}->responseContent);
+
+    $self->{response} = Face::Client::Response->new(%$response);
+
+    for my $tag (@{$response->{photos}[0]{tags}}) {
+        push @tags, Face::Client::Response::Tag->new($tag);
+    }
+
+    return @tags;
+}
+
+=head2 response
+
+=cut
+
+sub response {
+    my $self  = shift;
+
+    return $self->{response};
+}
+
 =head1 AUTHOR
 
 Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
@@ -122,8 +155,6 @@ Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
 Please report any bugs or feature requests to C<bug-face-client at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Face-Client>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
 
 
 =head1 SUPPORT
