@@ -3,6 +3,11 @@ package Face::Client;
 use 5.006;
 use strict;
 use warnings;
+use Carp;
+
+use Face::Client::Response::Tag;
+use JSON;
+use REST::Client;
 
 =head1 NAME
 
@@ -15,7 +20,6 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
-
 
 =head1 SYNOPSIS
 
@@ -42,11 +46,71 @@ if you don't export anything, such as for a purely object-oriented module.
 sub function1 {
 }
 
-=head2 function2
+=head2 new
 
 =cut
 
-sub function2 {
+sub new {
+    my $class  = shift;
+    my $params = shift;
+
+    my $self = bless {}, $class;
+    $self->{server}     = 'http://api.face.com';
+    $self->{api_key}    = $ENV{'FACE_API_KEY'};
+    $self->{api_secret} = $ENV{'FACE_API_SECRET'};
+
+    for my $key ( keys %$params ) {
+        if ( $key =~ /^api_key$/i ) {
+            $self->{'api_key'} = $params->{$key};
+            next;
+        }
+        if ( $key =~ /^api_secret$/i ) {
+            $self->{'api_secret'} = $params->{$key};
+            next;
+        }
+        carp("Unknown parameter $key");
+        return undef;
+    }
+
+    $self->{rest} = REST::Client->new();
+
+    # Automatically follow redirect
+    $self->{rest}->setFollow(1);
+    $self->{rest}->setHost( $self->{server} );
+
+#        $self->set_header(Authorization => "Basic $creds");
+#        $self->set_header(Accept => "application/json");
+
+    return $self;
+}
+
+=head2 faces_detect
+
+=cut
+
+sub faces_detect {
+    my $self  = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key (keys %params) {
+        $parameters .= "&$key=".$params{$key};
+    }
+    
+    $self->{rest}->GET($self->{server}."/faces/detect.json?".$self->_get_url().$parameters);
+
+    return Face::Client::Response::Tag->new(decode_json($self->{rest}->responseContent));
+}
+
+=head2 _get_url
+
+=cut
+
+sub _get_url {
+    my $self  = shift;
+
+    return "&api_key=".$self->{api_key}."&api_secret=".$self->{api_secret};
 }
 
 =head1 AUTHOR
@@ -108,4 +172,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of Face::Client
+1;    # End of Face::Client

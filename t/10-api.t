@@ -15,8 +15,9 @@ ok(!$@,"new()");
 isa_ok($client, 'Face::Client');
 
 # Check for lowlevel API methods availability
-can_ok ($client, "faces_detect ");
-my $response = $client->faces_detect(url => ""http://face.com/img/faces-of-the-festival-no-countries.jpg");
+can_ok ($client, "faces_detect");
+my $response = $client->faces_detect(url => "http://face.com/img/faces-of-the-festival-no-countries.jpg");
+diag($response);
 isa_ok($response, 'Face::Client::Response::Tag');
 can_ok ($response, "status");
 can_ok ($response, "error_code");

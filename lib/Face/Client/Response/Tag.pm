@@ -1,4 +1,4 @@
-package Face::Client;
+package Face::Client::Response::Tag;
 
 use 5.006;
 use strict;
@@ -15,7 +15,6 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
-
 
 =head1 SYNOPSIS
 
@@ -35,11 +34,22 @@ if you don't export anything, such as for a purely object-oriented module.
 
 =head1 SUBROUTINES/METHODS
 
-=head2 function1
+=head2 new
 
 =cut
 
-sub function1 {
+sub new {
+    my $class  = shift;
+    my %params = @_;
+
+    my $self = {};
+
+    for my $key ( keys %params ) {
+        $self->{$key} = $params{$key};
+
+    }
+
+    return bless $self, $class;
 }
 
 =head2 function2
@@ -108,4 +118,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of Face::Client
+1;    # End of Face::Client
