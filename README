@@ -1,5 +1,8 @@
 Face-Client
 
+*** Caution : Work in progress !!! ***
+The API isn't fully covered, the module isn't usable yet.
+
 This module aims to provide a high-level interface to
 the Face.com face recognition REST API.
 
