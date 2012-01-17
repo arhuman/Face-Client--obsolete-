@@ -18,6 +18,6 @@ WriteMakefile(
         'Test::More' => 0,
     },
     dist                => { COMPRESS => ' gzip - 9 f ', SUFFIX => ' gz ', },
-    clean               => { FILES => ' Face-Client- *'
+    clean               => { FILES => 'Face-Client-*'
     },
 );
