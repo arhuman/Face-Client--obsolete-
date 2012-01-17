@@ -96,6 +96,9 @@ can_ok( $tag, "lips" );
 is( $tag->lips, undef, 'check for lips value' );
 can_ok( $tag, "face" );
 is( $tag->face, undef, 'check for face value' );
+can_ok( $tag, "tid" );
+# Can't test tid (as *temporary* value changes between each invocation)
+#is( $tag->tid, "TEMP_F@49996d7d39d82aa979caed80fcc052f4_9ae307bb1e8fb6b90767fe326b6edb12_5.91_90.05_0_0", 'check for tid value' );
 
 my $response = $client->response;
 isa_ok( $response, 'Face::Client::Response' );

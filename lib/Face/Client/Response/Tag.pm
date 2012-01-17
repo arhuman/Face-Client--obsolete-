@@ -51,7 +51,6 @@ sub new {
     return bless($self, $class);
 }
 
-
 =head2 width
 
 Getter for the width attribute
@@ -251,6 +250,18 @@ sub smiling {
 }
 
 
+
+=head2 tid
+
+Getter for the tid attribute
+
+=cut
+
+sub tid {
+    my $self = shift;
+
+    return $self->{'tid'};
+}
 
 
 =head2 mood
