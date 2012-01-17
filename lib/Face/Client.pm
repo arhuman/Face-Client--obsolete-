@@ -10,6 +10,8 @@ use Face::Client::Response::Tag;
 use JSON;
 use REST::Client;
 
+use Data::Dumper;
+
 =head1 NAME
 
 Face::Client - Client to the Face.com REST API
@@ -271,8 +273,9 @@ sub tags_save {
         $parameters .= "&$key=" . $params{$key};
     }
 
-    return $self->_process_response( 'GET',
-        "/tags/save.json?" . $self->_get_url() . $parameters );
+    $self->_process_response( 'GET', "/tags/save.json?" . $self->_get_url() . $parameters );
+
+    return $self->response->tags_saved;
 }
 
 =head2 account_limits
@@ -293,8 +296,10 @@ sub account_limits {
         $parameters .= "&$key=" . $params{$key};
     }
 
-    return $self->_process_response( 'GET',
-        "/accounts/limits.json?" . $self->_get_url() . $parameters );
+    $self->_process_response( 'GET',
+        "/account/limits.json?" . $self->_get_url() . $parameters );
+
+    return $self->response->limits;
 }
 
 =head2 account_users
@@ -315,8 +320,40 @@ sub account_users {
         $parameters .= "&$key=" . $params{$key};
     }
 
-    return $self->_process_response( 'GET',
-        "/tags/add.json?" . $self->_get_url() . $parameters );
+    $self->_process_response( 'GET',
+        "/account/users.json?" . $self->_get_url() . $parameters );
+
+    return $self->response->users;
+}
+
+=head2 account_namespaces
+
+Returns all authorized namespaces that given api_key can use with the API.
+
+Authorized namespaces can be:
+
+    Namespace owned by the owner of the api_key.
+    Namespace defined as Public or Public Read only by other users
+    Special Public Namespace: Facebook and Twitter
+
+More information : http://developers.face.com/docs/api/account-namespaces/
+
+=cut
+
+sub account_namespaces {
+    my $self   = shift;
+    my %params = @_;
+
+    my $parameters = '';
+
+    for my $key ( keys %params ) {
+        $parameters .= "&$key=" . $params{$key};
+    }
+
+    $self->_process_response( 'GET',
+        "/account/namespaces.json?" . $self->_get_url() . $parameters );
+
+    return @{$self->response->namespaces}
 }
 
 =head2 _get_url
@@ -350,15 +387,14 @@ sub _process_response {
 
     my $response = decode_json( $self->{rest}->responseContent );
 
-    $self->{response} = Face::Client::Response->new(%$response);
+    $self->{response} = Face::Client::Response->new($response);
 
-    for my $tag ( @{ $response->{photos}[0]{tags} } ) {
-        push @tags, Face::Client::Response::Tag->new($tag);
-
-#        push @{$self->{ADEBUG}}, {X => Face::Client::Response::Tag->new($tag)};
+    for my $photo ( $self->response->photos() ) {
+        for my $tag ( $photo->tags() ) {
+            push @tags, $tag;
+        }
     }
 
-    @{ $self->{ADEBUG} } = @tags;
     return @tags;
 }
 

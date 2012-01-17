@@ -4,9 +4,12 @@ use 5.006;
 use strict;
 use warnings;
 
+use Face::Client::Response::Photo;
+use Face::Client::Response::Limits;
+
 =head1 NAME
 
-Face::Client - The great new Face::Client!
+Face::Client::Response
 
 =head1 VERSION
 
@@ -15,7 +18,6 @@ Version 0.01
 =cut
 
 our $VERSION = '0_01';
-
 
 =head1 SYNOPSIS
 
@@ -43,15 +45,35 @@ The Face::Client::Response constructor
 
 sub new {
     my $class  = shift;
-    my %params = @_;
+    my $params = shift;
 
-    my $self = {};
+    my $self = bless {}, $class;
 
-    for my $key ( keys %params ) {
-        $self->{$key} = $params{$key};
+    for my $key ( keys %$params ) {
+        $self->{$key} = $params->{$key};
     }
 
-    return bless $self, $class;
+    if ( $params->{'photos'} ) {
+        my @photos;
+        for my $photo ( @{ $params->{photos} } ) {
+            push @photos, Face::Client::Response::Photo->new($photo);
+        }
+        @{ $self->{photos} } = @photos;
+    }
+    if ( $params->{'saved_tags'} ) {
+        my @saved_tags;
+        for my $saved_tag ( @{ $params->{saved_tags} } ) {
+            push @saved_tags, $saved_tag;
+        }
+        @{ $self->{saved_tags} } = @saved_tags;
+    }
+
+    if ( $params->{'usage'} ) {
+        $self->{'limits'}  = Face::Client::Response::Limits->new($params->{'usage'});
+        delete $self->{'usage'};
+    }
+
+    return $self;
 }
 
 =head2 status
@@ -90,6 +112,18 @@ sub error_message {
     return $self->{'error_message'};
 }
 
+=head2 message
+
+Getter for the message attribute
+
+=cut
+
+sub message {
+    my $self = shift;
+
+    return $self->{'message'};
+}
+
 =head2 photos
 
 Getter for the photos attribute
@@ -98,10 +132,23 @@ Getter for the photos attribute
 
 sub photos {
     my $self = shift;
+    $self->{'photos'} = [] unless $self->{'photos'};
 
-    return $self->{'photos'};
+    return @{ $self->{'photos'} };
 }
 
+=head2 saved_tags
+
+Getter for the saved_tags attribute
+
+=cut
+
+sub saved_tags {
+    my $self = shift;
+    $self->{'saved_tags'} = [] unless $self->{'saved_tags'};
+
+    return @{ $self->{'saved_tags'} };
+}
 
 =head2 url
 
@@ -115,7 +162,6 @@ sub url {
     return $self->{'url'};
 }
 
-
 =head2 pid
 
 Getter for the pid attribute
@@ -127,7 +173,6 @@ sub pid {
 
     return $self->{'pid'};
 }
-
 
 =head2 width
 
@@ -141,7 +186,6 @@ sub width {
     return $self->{'width'};
 }
 
-
 =head2 height
 
 Getter for the height attribute
@@ -153,7 +197,6 @@ sub height {
 
     return $self->{'height'};
 }
-
 
 =head2 tags
 
@@ -167,7 +210,6 @@ sub tags {
     return $self->{'tags'};
 }
 
-
 =head2 groups
 
 Getter for the groups attribute
@@ -179,7 +221,6 @@ sub groups {
 
     return $self->{'groups'};
 }
-
 
 =head2 tid
 
@@ -193,7 +234,6 @@ sub tid {
     return $self->{'tid'};
 }
 
-
 =head2 recognizable
 
 Getter for the recognizable attribute
@@ -205,7 +245,6 @@ sub recognizable {
 
     return $self->{'recognizable'};
 }
-
 
 =head2 threshold
 
@@ -219,7 +258,6 @@ sub threshold {
     return $self->{'threshold'};
 }
 
-
 =head2 uids
 
 Getter for the uids attribute
@@ -232,7 +270,6 @@ sub uids {
     return $self->{'uids'};
 }
 
-
 =head2 label
 
 Getter for the label attribute
@@ -244,7 +281,6 @@ sub label {
 
     return $self->{'label'};
 }
-
 
 =head2 confirmed
 
@@ -270,6 +306,54 @@ sub manual {
     return $self->{'manual'};
 }
 
+=head2 limits
+
+Getter for the limits attribute
+
+=cut
+
+sub limits {
+    my $self = shift;
+
+    return $self->{'limits'};
+}
+
+=head2 users
+
+Getter for the users attribute
+
+=cut
+
+sub users {
+    my $self = shift;
+
+    return $self->{'users'};
+}
+
+=head2 namespaces
+
+Getter for the namespaces attribute
+
+=cut
+
+sub namespaces {
+    my $self = shift;
+
+    return $self->{'namespaces'};
+}
+
+=head2 tags_saved
+
+Getter for the tags_saved attribute
+
+=cut
+
+sub tags_saved {
+    my $self = shift;
+
+    return $self->{'tags_saved'};
+}
+
 =head1 AUTHOR
 
 Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
@@ -278,9 +362,6 @@ Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
 
 Please report any bugs or feature requests to C<bug-face-client at rt.cpan.org>, or through
 the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Face-Client>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
 
 
 =head1 SUPPORT
@@ -329,4 +410,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1; # End of Face::Client
+1;    # End of Face::Client

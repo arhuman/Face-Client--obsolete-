@@ -14,13 +14,30 @@ unless ( $ENV{FACE_API_KEY} && $ENV{FACE_API_SECRET}) {
     plan skip_all => ' Set environment vars for API access';
 }
 
-plan tests => 68;
+plan tests => 83;
 
 my $client;
 eval { $client = Face::Client->new() };
 ok( !$@, "new()" );
 
 isa_ok( $client, 'Face::Client' );
+can_ok($client,"account_limits");
+my $limits = $client->account_limits;
+isa_ok($limits, "Face::Client::Response::Limits");
+can_ok($limits,'used');
+can_ok($limits,'remaining');
+can_ok($limits,'limit');
+can_ok($limits,'reset_time_text');
+can_ok($limits,'reset_time');
+can_ok($limits,'namespace_limit');
+can_ok($limits,'namespace_used');
+can_ok($limits,'namespace_remaining');
+
+can_ok($client,"account_namespaces");
+my @namespaces = $client->account_namespaces;
+cmp_ok($#namespaces ,">", 10, "Namespaces returned");
+
+can_ok($client,"account_users");
 
 # Check for lowlevel API methods availability
 can_ok( $client, "faces_detect" );
@@ -29,7 +46,6 @@ my @tags = $client->faces_detect(
 is( $#tags, 15, "16 tags retrieved" );
 my $tag = shift @tags;
 
-#diag(Dumper($tag));
 isa_ok( $tag, 'Face::Client::Response::Tag' );
 can_ok( $tag, "width" );
 is( $tag->width, '11.09', 'check for width value' );
@@ -81,7 +97,6 @@ can_ok( $tag, "roll" );
 is_deeply( $tag->roll, '8.1', 'check for roll value' );
 can_ok( $tag, "attributes" );
 
-#diag(Dumper($tag->attributes));
 is_deeply(
     $tag->attributes,
     {
@@ -137,3 +152,19 @@ can_ok( $client, "tags_remove" );
 can_ok( $client, "account_limits" );
 can_ok( $client, "account_users" );
 
+# Face recognition scenario
+@tags = $client->faces_detect(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg,http://media.linkedin.com/mpr/pub/image-ydXbyfluDqrF4odQH8fDyBF07ONcpJdQHNaYyXk1s4K8Dk6Q/kevin-polizzi.jpg,http://experts-it.fr/files/2011/01/Jaguar-Kevin-Polizzi.jpg,http://www.jaguar-network.com/jn/templates/images/img57.jpg");
+my $ids = join ",", map {$_->tid} @tags;
+my @st = $client->tags_save(tids => $ids,uid => 'kevin.polizzi@face-client-perl');
+diag(Dumper($client->response));
+diag(Dumper(\@st));
+is ($client->response->status,"success", "Test for error code");
+#diag (\@st);
+@tags = $client->tags_get(uids => 'kevin.polizzi@face-client-perl');
+cmp_ok($#st,'==',$#tags,"Get saved tags");
+
+my @users = $client->account_users(namespaces => 'face-client-perl');
+cmp_ok($#users ,"==", "Zero user before training");
+$client->faces_train(uids => 'kevin.polizzi@face-client-perl');
+@users = $client->account_users(namespaces => 'face-client-perl');
+cmp_ok($#users ,"==", "Exactly one user after training");
