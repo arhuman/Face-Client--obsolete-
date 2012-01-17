@@ -8,7 +8,13 @@ use Face::Client;
 use JSON;
 use Data::Dumper;
 
-plan tests => 67;
+
+unless ( $ENV{FACE_API_KEY} && $ENV{FACE_API_SECRET}) {
+    warn("\n\nSet FACE_API_KEY, FACE_API_SECRET for testing\n\n");
+    plan skip_all => ' Set environment vars for API access';
+}
+
+plan tests => 68;
 
 my $client;
 eval { $client = Face::Client->new() };
