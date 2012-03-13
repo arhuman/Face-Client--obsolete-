@@ -1,4 +1,0 @@
-do{ my $x = {
-       'Face-Client-*' => 1
-     };
-$x; }
