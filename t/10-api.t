@@ -1,10 +1,10 @@
-#!/usr/bin/perl
+#!/usr/bin/perl 
 
-use strict;
-use warnings;
+use strict; 
+use warnings; 
 
-use Test::More;
-use Face::Client;
+use Test::More; 
+use Face::Client; 
 use JSON;
 use Data::Dumper;
 
@@ -14,7 +14,7 @@ unless ( $ENV{FACE_API_KEY} && $ENV{FACE_API_SECRET}) {
     plan skip_all => ' Set environment vars for API access';
 }
 
-plan tests => 83;
+plan tests => 87;
 
 my $client;
 eval { $client = Face::Client->new() };
@@ -22,16 +22,16 @@ ok( !$@, "new()" );
 
 isa_ok( $client, 'Face::Client' );
 can_ok($client,"account_limits");
-my $limits = $client->account_limits;
-isa_ok($limits, "Face::Client::Response::Limits");
-can_ok($limits,'used');
-can_ok($limits,'remaining');
-can_ok($limits,'limit');
-can_ok($limits,'reset_time_text');
-can_ok($limits,'reset_time');
-can_ok($limits,'namespace_limit');
-can_ok($limits,'namespace_used');
-can_ok($limits,'namespace_remaining');
+my $account = $client->account_limits;
+isa_ok($account, "Face::Client::Response::Account");
+can_ok($account,'used');
+can_ok($account,'remaining');
+can_ok($account,'limit');
+can_ok($account,'reset_time_text');
+can_ok($account,'reset_time');
+can_ok($account,'namespace_limit');
+can_ok($account,'namespace_used');
+can_ok($account,'namespace_remaining');
 
 can_ok($client,"account_namespaces");
 my @namespaces = $client->account_namespaces;
@@ -60,50 +60,50 @@ is_deeply(
 can_ok( $tag, "eye_left" );
 is_deeply(
     $tag->eye_left,
-    { y => '87.09', x => '3.36' },
+    { y => '87.15', x => '3.43' },
     'check for eye_left value'
 );
 can_ok( $tag, "eye_right" );
 is_deeply(
     $tag->eye_right,
-    { y => '87.72', x => '7.74' },
+    { y => '87.56', x => '7.88' },
     'check for eye_right value'
 );
 can_ok( $tag, "mouth_left" );
 is_deeply(
     $tag->mouth_left,
-    { y => '92.34', x => '3.05' },
+    { y => '92.91', x => '2.77' },
     'check for mouth_left value'
 );
 can_ok( $tag, "mouth_center" );
 is_deeply(
     $tag->mouth_center,
-    { x => '4.42', y => '92.7' },
+    { x => '4.23', y => '93.06' },
     'check for center value'
 );
 can_ok( $tag, "mouth_right" );
 is_deeply(
     $tag->mouth_right,
-    { x => '6.01', y => '92.88' },
+    { x => '6.42', y => '93.21' },
     'check for mouth_right value'
 );
 can_ok( $tag, "nose" );
-is_deeply( $tag->nose, { x => '3.92', y => '90.41' }, 'check for nose value' );
+is_deeply( $tag->nose, { x => '4.05', y => '90.29' }, 'check for nose value' );
 can_ok( $tag, "yaw" );
-is( $tag->yaw, '-29.85', 'check for yaw value' );
+is( $tag->yaw, '19.14', 'check for yaw value' );
 can_ok( $tag, "pitch" );
-is( $tag->pitch, '-0.19', 'check for pitch value' );
+is( $tag->pitch, '-1.68', 'check for pitch value' );
 can_ok( $tag, "roll" );
-is_deeply( $tag->roll, '8.1', 'check for roll value' );
+is_deeply( $tag->roll, '7.92', 'check for roll value' );
 can_ok( $tag, "attributes" );
 
 is_deeply(
     $tag->attributes,
     {
-        'face'    => { 'value' => 'true',  'confidence' => 98 },
-        'smiling' => { 'value' => 'false', 'confidence' => 92 },
-        'glasses' => { 'value' => 'false', 'confidence' => 95 },
-        'gender'  => { 'value' => 'male',  'confidence' => 90 }
+        'face'    => { 'value' => 'true',  'confidence' => 97 },
+        'smiling' => { 'value' => 'false', 'confidence' => 90 },
+        'glasses' => { 'value' => 'false', 'confidence' => 98 },
+        'gender'  => { 'value' => 'male',  'confidence' => 89 }
     },
     'check for attributes value'
 );
@@ -156,15 +156,18 @@ can_ok( $client, "account_users" );
 @tags = $client->faces_detect(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg,http://media.linkedin.com/mpr/pub/image-ydXbyfluDqrF4odQH8fDyBF07ONcpJdQHNaYyXk1s4K8Dk6Q/kevin-polizzi.jpg,http://experts-it.fr/files/2011/01/Jaguar-Kevin-Polizzi.jpg,http://www.jaguar-network.com/jn/templates/images/img57.jpg");
 my $ids = join ",", map {$_->tid} @tags;
 my @st = $client->tags_save(tids => $ids,uid => 'kevin.polizzi@face-client-perl');
-diag(Dumper($client->response));
-diag(Dumper(\@st));
 is ($client->response->status,"success", "Test for error code");
-#diag (\@st);
 @tags = $client->tags_get(uids => 'kevin.polizzi@face-client-perl');
 cmp_ok($#st,'==',$#tags,"Get saved tags");
 
 my @users = $client->account_users(namespaces => 'face-client-perl');
-cmp_ok($#users ,"==", "Zero user before training");
+cmp_ok($#users ,"==", 0,"Zero user before training");
 $client->faces_train(uids => 'kevin.polizzi@face-client-perl');
 @users = $client->account_users(namespaces => 'face-client-perl');
-cmp_ok($#users ,"==", "Exactly one user after training");
+is_deeply(@users,('kevin.polizzi@face-client-perl'),'users are the same');
+@tags = $client->faces_recognize(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg", uids => 'kevin.polizzi@face-client-perl');
+ok ($tags[0]->recognized, 'User recognized');
+@tags = $client->faces_recognize(urls => 'http://img2.imagesbn.com/images/137400000/137404562.JPG', uids => 'kevin.polizzi@face-client-perl');
+ok (!$tags[0]->recognized, 'Bad user NOT recognized');
+
+#$client->tags_remove(tids => );

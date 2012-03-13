@@ -1,12 +1,14 @@
-package Face::Client::Response::Limits;
+package Face::Client::Response::Account;
 
 use 5.006;
 use strict;
 use warnings;
 
+use Data::Dumper;
+
 =head1 NAME
 
-Face::Client::Response::Limits
+Face::Client::Response::Account
 
 =head1 VERSION
 
@@ -48,9 +50,8 @@ sub new {
         $self->{$key} = $params->{$key};
     }
 
-    return bless( $self, $class );
+    return bless($self, $class);
 }
-
 
 =head2 used
 
@@ -87,7 +88,6 @@ sub limit {
 
     return $self->{'limit'};
 }
-
 
 =head2 reset_time_text
 
@@ -147,6 +147,55 @@ sub namespace_remaining {
     my $self = shift;
 
     return $self->{'namespace_remaining'};
+}
+
+=head2 users
+
+Getter for the users attribute
+
+=cut
+
+sub users {
+    my $self = shift;
+    my @users;
+
+        for my $ns (keys %{$self->{'users'}}) {
+            push @users, @{$self->{'users'}{$ns}} 
+    }
+
+    return @users;
+}
+
+=head2 namespaces
+
+Getter for the namespaces attribute
+
+=cut
+
+sub namespaces {
+    my $self = shift;
+
+    return @{$self->{'namespaces'}};
+}
+
+=head2 limits
+
+Getter for the limits attribute
+
+=cut
+
+sub limits {
+    my $self = shift;
+
+    return (    used => $self->used, 
+                remaining => $self->remaining,
+                limit => $self->limit,
+                reset_time_text => $self->reset_time_text,
+                reset_time => $self->reset_time,
+                namespace_limit => $self->namespace_limit,
+                namespace_used => $self->namespace_used,
+                namespace_remaining => $self->namespace_remaining
+            );
 }
 
 =head1 AUTHOR

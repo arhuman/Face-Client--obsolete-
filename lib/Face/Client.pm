@@ -275,7 +275,7 @@ sub tags_save {
 
     $self->_process_response( 'GET', "/tags/save.json?" . $self->_get_url() . $parameters );
 
-    return $self->response->tags_saved;
+    return $self->response->saved_tags;
 }
 
 =head2 account_limits
@@ -299,7 +299,7 @@ sub account_limits {
     $self->_process_response( 'GET',
         "/account/limits.json?" . $self->_get_url() . $parameters );
 
-    return $self->response->limits;
+    return $self->response->account;
 }
 
 =head2 account_users
@@ -323,7 +323,7 @@ sub account_users {
     $self->_process_response( 'GET',
         "/account/users.json?" . $self->_get_url() . $parameters );
 
-    return $self->response->users;
+    return $self->response->account->users;
 }
 
 =head2 account_namespaces
@@ -353,7 +353,7 @@ sub account_namespaces {
     $self->_process_response( 'GET',
         "/account/namespaces.json?" . $self->_get_url() . $parameters );
 
-    return @{$self->response->namespaces}
+    return $self->response->account->namespaces;
 }
 
 =head2 _get_url
@@ -386,6 +386,10 @@ sub _process_response {
     }
 
     my $response = decode_json( $self->{rest}->responseContent );
+
+    if (ref $response !~ /^HASH/) {
+        croak "Invalid response ($response)"
+    }
 
     $self->{response} = Face::Client::Response->new($response);
 

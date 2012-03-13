@@ -48,7 +48,7 @@ sub new {
         $self->{$key} = $params->{$key};
     }
 
-    return bless($self, $class);
+    return bless( $self, $class );
 }
 
 =head2 width
@@ -171,7 +171,6 @@ sub yaw {
     return $self->{'yaw'};
 }
 
-
 =head2 pitch
 
 Getter for the pitch attribute
@@ -183,7 +182,6 @@ sub pitch {
 
     return $self->{'pitch'};
 }
-
 
 =head2 roll
 
@@ -197,7 +195,6 @@ sub roll {
     return $self->{'roll'};
 }
 
-
 =head2 attributes
 
 Getter for the attributes attribute
@@ -209,7 +206,6 @@ sub attributes {
 
     return $self->{'attributes'};
 }
-
 
 =head2 gender
 
@@ -223,7 +219,6 @@ sub gender {
     return $self->{'gender'};
 }
 
-
 =head2 glasses
 
 Getter for the glasses attribute
@@ -235,7 +230,6 @@ sub glasses {
 
     return $self->{'glasses'};
 }
-
 
 =head2 smiling
 
@@ -249,8 +243,6 @@ sub smiling {
     return $self->{'smiling'};
 }
 
-
-
 =head2 tid
 
 Getter for the tid attribute
@@ -262,7 +254,6 @@ sub tid {
 
     return $self->{'tid'};
 }
-
 
 =head2 mood
 
@@ -276,7 +267,6 @@ sub mood {
     return $self->{'mood'};
 }
 
-
 =head2 lips
 
 Getter for the lips attribute
@@ -288,7 +278,6 @@ sub lips {
 
     return $self->{'lips'};
 }
-
 
 =head2 face
 
@@ -302,6 +291,47 @@ sub face {
     return $self->{'face'};
 }
 
+=head2 recognizable
+
+Getter for the recognizable attribute
+
+=cut
+
+sub recognizable {
+    my $self = shift;
+
+    return $self->{'recognizable'};
+}
+
+=head2 uids
+
+Getter for the uids attribute
+
+=cut
+
+sub uids {
+    my $self = shift;
+
+    return $self->{'uids'};
+}
+
+=head2 recognized
+
+Retur the uid of the recognized user
+
+=cut
+
+sub recognized {
+    my $self = shift;
+
+    if ( $self->recognizable and @{ $self->uids } ) {
+        return shift @{ $self->uids };
+    }
+    else {
+        return;
+    }
+    return $self->{'recognize'};
+}
 
 =head1 AUTHOR
 

@@ -1,10 +1,30 @@
 Face-Client
 
-*** Caution : Work in progress !!! ***
-The API isn't fully covered, the module isn't usable yet.
+*********** Caution : Work in progress !!! ******************
+The API isn't fully covered, the module is barely usable yet.
+*************************************************************
 
 This module aims to provide a high-level interface to
 the Face.com face recognition REST API.
+
+
+Face recognition scenario :
+
+    # First submit pictures
+    @tags = $client->faces_detect(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg,http://media.linkedin.com/mpr/pub/image-ydXbyfluDqrF4odQH8fDyBF07ONcpJdQHNaYyXk1s4K8Dk6Q/kevin-polizzi.jpg,http://experts-it.fr/files/2011/01/Jaguar-Kevin-Polizzi.jpg,http://www.jaguar-network.com/jn/templates/images/img57.jpg");
+    
+    # Then save the tags id with the associated user id
+    my $ids = join ",", map {$_->tid} @tags;
+    my @st = $client->tags_save(tids => $ids,uid => 'kevin.polizzi@face-client-perl');
+
+    # Train for the use
+    $client->faces_train(uids => 'kevin.polizzi@face-client-perl');
+
+    # From now on, you can try to recognize user on urL
+    @tags = $client->faces_recognize(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg", uids => 'kevin.polizzi@face-client-perl');
+    if ($tags[0]->recognized) {
+        ... 
+    }
 
 INSTALLATION
 

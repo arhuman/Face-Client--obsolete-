@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Face::Client::Response::Photo;
-use Face::Client::Response::Limits;
+use Face::Client::Response::Account;
 
 =head1 NAME
 
@@ -69,10 +69,24 @@ sub new {
     }
 
     if ( $params->{'usage'} ) {
-        $self->{'limits'}  = Face::Client::Response::Limits->new($params->{'usage'});
+        $self->{'account'}  = Face::Client::Response::Account->new($params->{'usage'});
         delete $self->{'usage'};
     }
 
+    if ( $params->{'users'} ) {
+        $self->{'account'}  = Face::Client::Response::Account->new($params);
+        delete $self->{'usage'};
+    }
+
+    if ( $params->{'limits'} ) {
+        $self->{'account'}  = Face::Client::Response::Account->new($params->{'limits'});
+        delete $self->{'usage'};
+    }
+
+    if ( $params->{'namespaces'} ) {
+        $self->{'account'}  = Face::Client::Response::Account->new($params);
+        delete $self->{'namespaces'};
+    }
     return $self;
 }
 
@@ -315,7 +329,7 @@ Getter for the limits attribute
 sub limits {
     my $self = shift;
 
-    return $self->{'limits'};
+    return $self->account->limits;
 }
 
 =head2 users
@@ -330,28 +344,17 @@ sub users {
     return $self->{'users'};
 }
 
-=head2 namespaces
 
-Getter for the namespaces attribute
+=head2 account
 
-=cut
-
-sub namespaces {
-    my $self = shift;
-
-    return $self->{'namespaces'};
-}
-
-=head2 tags_saved
-
-Getter for the tags_saved attribute
+Getter for the account attribute
 
 =cut
 
-sub tags_saved {
+sub account {
     my $self = shift;
 
-    return $self->{'tags_saved'};
+    return $self->{'account'};
 }
 
 =head1 AUTHOR
