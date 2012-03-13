@@ -16,7 +16,7 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0_01';
+our $VERSION = '0_02';
 
 =head1 SYNOPSIS
 
