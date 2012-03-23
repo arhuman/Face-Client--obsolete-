@@ -14,21 +14,27 @@ unless ( $ENV{FACE_API_KEY} && $ENV{FACE_API_SECRET}) {
     plan skip_all => ' Set environment vars for API access';
 }
 
-plan tests => 87;
+plan tests => 88;
 
 my $client;
 eval { $client = Face::Client->new() };
 ok( !$@, "new()" );
 
 isa_ok( $client, 'Face::Client' );
-can_ok($client,"account_limits");
+
+########################################################################
+#                   Account API
+########################################################################
+
 my $account = $client->account_limits;
 isa_ok($account, "Face::Client::Response::Account");
+
 can_ok($account,'used');
 can_ok($account,'remaining');
 can_ok($account,'limit');
 can_ok($account,'reset_time_text');
 can_ok($account,'reset_time');
+
 can_ok($account,'namespace_limit');
 can_ok($account,'namespace_used');
 can_ok($account,'namespace_remaining');
@@ -39,10 +45,15 @@ cmp_ok($#namespaces ,">", 10, "Namespaces returned");
 
 can_ok($client,"account_users");
 
+########################################################################
+#                   Tag API
+########################################################################
+
 # Check for lowlevel API methods availability
 can_ok( $client, "faces_detect" );
 my @tags = $client->faces_detect(
-    urls => "http://face.com/img/faces-of-the-festival-no-countries.jpg" );
+        { urls => "http://face.com/img/faces-of-the-festival-no-countries.jpg" }
+   );
 is( $#tags, 15, "16 tags retrieved" );
 my $tag = shift @tags;
 
@@ -121,6 +132,10 @@ can_ok( $tag, "tid" );
 # Can't test tid (as *temporary* value changes between each invocation)
 #is( $tag->tid, "TEMP_F@49996d7d39d82aa979caed80fcc052f4_9ae307bb1e8fb6b90767fe326b6edb12_5.91_90.05_0_0", 'check for tid value' );
 
+########################################################################
+#                   Response API
+########################################################################
+
 my $response = $client->response;
 isa_ok( $response, 'Face::Client::Response' );
 can_ok( $response, "status" );
@@ -140,6 +155,10 @@ can_ok( $response, "uids" );
 can_ok( $response, "confirmed" );
 can_ok( $response, "manual" );
 
+########################################################################
+#                   Client API
+########################################################################
+
 can_ok( $client, "faces_recognize" );
 can_ok( $client, "faces_train" );
 can_ok( $client, "faces_status" );
@@ -152,22 +171,50 @@ can_ok( $client, "tags_remove" );
 can_ok( $client, "account_limits" );
 can_ok( $client, "account_users" );
 
-# Face recognition scenario
-@tags = $client->faces_detect(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg,http://media.linkedin.com/mpr/pub/image-ydXbyfluDqrF4odQH8fDyBF07ONcpJdQHNaYyXk1s4K8Dk6Q/kevin-polizzi.jpg,http://experts-it.fr/files/2011/01/Jaguar-Kevin-Polizzi.jpg,http://www.jaguar-network.com/jn/templates/images/img57.jpg");
+########################################################################
+#                   helper functions
+########################################################################
+
+
+my $client_h = Face::Client->new({api_key => 'key', api_secret => 'secret'}); 
+is($client_h->_get_credential_parameters(),'&api_key=key&api_secret=secret');
+$client_h = Face::Client->new(); 
+is($client_h->_get_credential_parameters(),'&api_key='.$ENV{FACE_API_KEY}.'&api_secret='.$ENV{FACE_API_SECRET});
+
+
+########################################################################
+#                   Face recognition scenario
+########################################################################
+
+@tags = $client->faces_detect(
+    { urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg,http://media.linkedin.com/mpr/pub/image-ydXbyfluDqrF4odQH8fDyBF07ONcpJdQHNaYyXk1s4K8Dk6Q/kevin-polizzi.jpg,http://experts-it.fr/files/2011/01/Jaguar-Kevin-Polizzi.jpg,http://www.jaguar-network.com/jn/templates/images/img57.jpg" }
+);
 my $ids = join ",", map {$_->tid} @tags;
-my @st = $client->tags_save(tids => $ids,uid => 'kevin.polizzi@face-client-perl');
+my @st = $client->tags_save(
+     { tids => $ids,uid => 'kevin.polizzi@face-client-perl' }
+);
 is ($client->response->status,"success", "Test for error code");
-@tags = $client->tags_get(uids => 'kevin.polizzi@face-client-perl');
+@tags = $client->tags_get( { uids => 'kevin.polizzi@face-client-perl' } );
 cmp_ok($#st,'==',$#tags,"Get saved tags");
 
-my @users = $client->account_users(namespaces => 'face-client-perl');
+my @users = $client->account_users( { namespaces => 'face-client-perl' } );
 cmp_ok($#users ,"==", 0,"Zero user before training");
-$client->faces_train(uids => 'kevin.polizzi@face-client-perl');
-@users = $client->account_users(namespaces => 'face-client-perl');
+$client->faces_train( { uids => 'kevin.polizzi@face-client-perl' } );
+@users = $client->account_users( { namespaces => 'face-client-perl' } );
 is_deeply(@users,('kevin.polizzi@face-client-perl'),'users are the same');
-@tags = $client->faces_recognize(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg", uids => 'kevin.polizzi@face-client-perl');
+@tags = $client->faces_recognize(
+    { 
+        urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg",
+        uids => 'kevin.polizzi@face-client-perl'
+    }
+);
 ok ($tags[0]->recognized, 'User recognized');
-@tags = $client->faces_recognize(urls => 'http://img2.imagesbn.com/images/137400000/137404562.JPG', uids => 'kevin.polizzi@face-client-perl');
+@tags = $client->faces_recognize(
+    {
+    urls => 'http://img2.imagesbn.com/images/137400000/137404562.JPG', 
+    uids => 'kevin.polizzi@face-client-perl'
+    }
+);
 ok (!$tags[0]->recognized, 'Bad user NOT recognized');
 
 #$client->tags_remove(tids => );

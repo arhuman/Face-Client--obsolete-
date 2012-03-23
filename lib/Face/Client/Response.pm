@@ -13,33 +13,31 @@ Face::Client::Response
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =cut
 
-our $VERSION = '0_02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+Face::Client::Response wraps the data returned by the server response
 
-Perhaps a little code snippet.
-
-    use Face::Client;
-
-    my $foo = Face::Client->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+It provides a simple OO interface to access the data
 
 =head1 SUBROUTINES/METHODS
 
-=head2 new
+=head2 new ( \%params )
 
 The Face::Client::Response constructor
+
+Valid %params keys are currently :
+    photos
+    saved_tags
+    usage
+    limits
+    users
+    namespaces
 
 =cut
 
@@ -90,9 +88,9 @@ sub new {
     return $self;
 }
 
-=head2 status
+=head2 status ()
 
-Getter for the status attribute
+Getter for the 'status' attribute
 
 =cut
 
@@ -102,9 +100,9 @@ sub status {
     return $self->{'status'};
 }
 
-=head2 error_code
+=head2 error_code ()
 
-Getter for the error_code attribute
+Getter for the 'error_code' attribute
 
 =cut
 
@@ -114,9 +112,9 @@ sub error_code {
     return $self->{'error_code'};
 }
 
-=head2 error_message
+=head2 error_message ()
 
-Getter for the error_message attribute
+Getter for the 'error_message' attribute
 
 =cut
 
@@ -126,9 +124,9 @@ sub error_message {
     return $self->{'error_message'};
 }
 
-=head2 message
+=head2 message ()
 
-Getter for the message attribute
+Getter for the 'message' attribute
 
 =cut
 
@@ -138,9 +136,9 @@ sub message {
     return $self->{'message'};
 }
 
-=head2 photos
+=head2 photos ()
 
-Getter for the photos attribute
+Getter for the 'photos' attribute
 
 =cut
 
@@ -151,9 +149,9 @@ sub photos {
     return @{ $self->{'photos'} };
 }
 
-=head2 saved_tags
+=head2 saved_tags ()
 
-Getter for the saved_tags attribute
+Getter for the 'saved_tags' attribute
 
 =cut
 
@@ -164,9 +162,9 @@ sub saved_tags {
     return @{ $self->{'saved_tags'} };
 }
 
-=head2 url
+=head2 url ()
 
-Getter for the url attribute
+Getter for the 'url' attribute
 
 =cut
 
@@ -176,9 +174,9 @@ sub url {
     return $self->{'url'};
 }
 
-=head2 pid
+=head2 pid ()
 
-Getter for the pid attribute
+Getter for the 'pid' attribute
 
 =cut
 
@@ -188,9 +186,9 @@ sub pid {
     return $self->{'pid'};
 }
 
-=head2 width
+=head2 width ()
 
-Getter for the width attribute
+Getter for the 'width' attribute
 
 =cut
 
@@ -200,9 +198,9 @@ sub width {
     return $self->{'width'};
 }
 
-=head2 height
+=head2 height ()
 
-Getter for the height attribute
+Getter for the 'height' attribute
 
 =cut
 
@@ -212,9 +210,9 @@ sub height {
     return $self->{'height'};
 }
 
-=head2 tags
+=head2 tags ()
 
-Getter for the tags attribute
+Getter for the 'tags' attribute
 
 =cut
 
@@ -224,9 +222,9 @@ sub tags {
     return $self->{'tags'};
 }
 
-=head2 groups
+=head2 groups ()
 
-Getter for the groups attribute
+Getter for the 'groups' attribute
 
 =cut
 
@@ -236,9 +234,9 @@ sub groups {
     return $self->{'groups'};
 }
 
-=head2 tid
+=head2 tid ()
 
-Getter for the tid attribute
+Getter for the 'tid' attribute
 
 =cut
 
@@ -248,9 +246,9 @@ sub tid {
     return $self->{'tid'};
 }
 
-=head2 recognizable
+=head2 recognizable ()
 
-Getter for the recognizable attribute
+Getter for the 'recognizable' attribute
 
 =cut
 
@@ -260,9 +258,9 @@ sub recognizable {
     return $self->{'recognizable'};
 }
 
-=head2 threshold
+=head2 threshold ()
 
-Getter for the threshold attribute
+Getter for the 'threshold' attribute
 
 =cut
 
@@ -272,9 +270,9 @@ sub threshold {
     return $self->{'threshold'};
 }
 
-=head2 uids
+=head2 uids ()
 
-Getter for the uids attribute
+Getter for the 'uids' attribute
 
 =cut
 
@@ -284,9 +282,9 @@ sub uids {
     return $self->{'uids'};
 }
 
-=head2 label
+=head2 label ()
 
-Getter for the label attribute
+Getter for the 'label' attribute
 
 =cut
 
@@ -296,9 +294,9 @@ sub label {
     return $self->{'label'};
 }
 
-=head2 confirmed
+=head2 confirmed ()
 
-Getter for the confirmed attribute
+Getter for the 'confirmed' attribute
 
 =cut
 
@@ -308,9 +306,9 @@ sub confirmed {
     return $self->{'confirmed'};
 }
 
-=head2 manual
+=head2 manual ()
 
-Getter for the manual attribute
+Getter for the 'manual' attribute
 
 =cut
 
@@ -320,9 +318,9 @@ sub manual {
     return $self->{'manual'};
 }
 
-=head2 limits
+=head2 limits ()
 
-Getter for the limits attribute
+Getter for the 'limits' attribute
 
 =cut
 
@@ -332,9 +330,9 @@ sub limits {
     return $self->account->limits;
 }
 
-=head2 users
+=head2 users ()
 
-Getter for the users attribute
+Getter for the 'users' attribute
 
 =cut
 
@@ -345,9 +343,9 @@ sub users {
 }
 
 
-=head2 account
+=head2 account ()
 
-Getter for the account attribute
+Getter for the 'account' attribute
 
 =cut
 
@@ -363,9 +361,9 @@ Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-face-client at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Face-Client>.  I will be notified, and then you'll
-
+Please report any bugs or feature requests to C< arhuman at gmail.com>, or through
+the web interface at L<https://github.com/arhuman/Face-Client/issues>.  I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
 
 =head1 SUPPORT
 
@@ -378,9 +376,9 @@ You can also look for information at:
 
 =over 4
 
-=item * RT: CPAN's request tracker (report bugs here)
+=item * Github repository
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Face-Client>
+L<https://github.com/arhuman/Face-Client>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
@@ -390,15 +388,17 @@ L<http://annocpan.org/dist/Face-Client>
 
 L<http://cpanratings.perl.org/d/Face-Client>
 
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Face-Client/>
-
 =back
+
+More information about Face.com service :
+
+L<http://developers.face.com/docs/api>
 
 
 =head1 ACKNOWLEDGEMENTS
 
+Thanks to Face.com for the service they provide.
+Thanks to Jaguar Network for allowing me to publish my work.
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -413,4 +413,4 @@ See http://dev.perl.org/licenses/ for more information.
 
 =cut
 
-1;    # End of Face::Client
+1;

@@ -16,6 +16,14 @@ my $builder = Module::Build->new(
     requires           => { 'perl' => 5.006, },
     add_to_cleanup     => ['Face-Client-*'],
     create_makefile_pl => 'traditional',
+    meta_merge         => {
+        resources => {
+            repository  => q[https://github.com/arhuman/Face-Client],
+            bugtracker  => q[https://github.com/arhuman/Face-Client/issues],
+        },
+        keywords     => [qw[face recognition rest api]],
+        generated_by => q[Arnaud (Arhuman) ASSAD <arhuman@gmail.com>]
+    },
 );
 
 $builder->create_build_script();

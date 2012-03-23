@@ -10,31 +10,23 @@ Face::Client - The great new Face::Client!
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =cut
 
-our $VERSION = '0_02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+Face::Client::Response::Tag wraps the data returned by the server for tags
 
-Perhaps a little code snippet.
-
-    use Face::Client;
-
-    my $foo = Face::Client->new();
-    ...
-
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+It provides a simple OO interface to access the data
 
 =head1 SUBROUTINES/METHODS
 
-=head2 new
+=head2 new ( \%params )
+
+The constructor for the ace::Client::Response::Tag class
 
 =cut
 
@@ -51,9 +43,9 @@ sub new {
     return bless( $self, $class );
 }
 
-=head2 width
+=head2 width ()
 
-Getter for the width attribute
+Getter for the 'width' attribute
 
 =cut
 
@@ -63,9 +55,9 @@ sub width {
     return $self->{'width'};
 }
 
-=head2 height
+=head2 height ()
 
-Getter for the height attribute
+Getter for the 'height' attribute
 
 =cut
 
@@ -75,9 +67,9 @@ sub height {
     return $self->{'height'};
 }
 
-=head2 center
+=head2 center ()
 
-Getter for the center attribute
+Getter for the 'center' attribute
 
 =cut
 
@@ -87,9 +79,9 @@ sub center {
     return $self->{'center'};
 }
 
-=head2 eye_left
+=head2 eye_left ()
 
-Getter for the eye_left attribute
+Getter for the 'eye_left' attribute
 
 =cut
 
@@ -99,9 +91,9 @@ sub eye_left {
     return $self->{'eye_left'};
 }
 
-=head2 eye_right
+=head2 eye_right ()
 
-Getter for the eye_right attribute
+Getter for the 'eye_right' attribute
 
 =cut
 
@@ -111,9 +103,9 @@ sub eye_right {
     return $self->{'eye_right'};
 }
 
-=head2 mouth_left
+=head2 mouth_left ()
 
-Getter for the mouth_left attribute
+Getter for the 'mouth_left' attribute
 
 =cut
 
@@ -123,9 +115,9 @@ sub mouth_left {
     return $self->{'mouth_left'};
 }
 
-=head2 mouth_center
+=head2 mouth_center ()
 
-Getter for the mouth_center attribute
+Getter for the 'mouth_center' attribute
 
 =cut
 
@@ -135,9 +127,9 @@ sub mouth_center {
     return $self->{'mouth_center'};
 }
 
-=head2 mouth_right
+=head2 mouth_right ()
 
-Getter for the mouth_right attribute
+Getter for the 'mouth_right' attribute
 
 =cut
 
@@ -147,9 +139,9 @@ sub mouth_right {
     return $self->{'mouth_right'};
 }
 
-=head2 nose
+=head2 nose ()
 
-Getter for the nose attribute
+Getter for the 'nose' attribute
 
 =cut
 
@@ -159,9 +151,9 @@ sub nose {
     return $self->{'nose'};
 }
 
-=head2 yaw
+=head2 yaw ()
 
-Getter for the yaw attribute
+Getter for the 'yaw' attribute
 
 =cut
 
@@ -171,9 +163,9 @@ sub yaw {
     return $self->{'yaw'};
 }
 
-=head2 pitch
+=head2 pitch ()
 
-Getter for the pitch attribute
+Getter for the 'pitch' attribute
 
 =cut
 
@@ -183,9 +175,9 @@ sub pitch {
     return $self->{'pitch'};
 }
 
-=head2 roll
+=head2 roll ()
 
-Getter for the roll attribute
+Getter for the 'roll' attribute
 
 =cut
 
@@ -195,9 +187,9 @@ sub roll {
     return $self->{'roll'};
 }
 
-=head2 attributes
+=head2 attributes ()
 
-Getter for the attributes attribute
+Getter for the 'attributes' data member (yep I mean attribute ;-)
 
 =cut
 
@@ -207,9 +199,9 @@ sub attributes {
     return $self->{'attributes'};
 }
 
-=head2 gender
+=head2 gender ()
 
-Getter for the gender attribute
+Getter for the 'gender' attribute
 
 =cut
 
@@ -219,9 +211,9 @@ sub gender {
     return $self->{'gender'};
 }
 
-=head2 glasses
+=head2 glasses ()
 
-Getter for the glasses attribute
+Getter for the 'glasses' attribute
 
 =cut
 
@@ -231,9 +223,9 @@ sub glasses {
     return $self->{'glasses'};
 }
 
-=head2 smiling
+=head2 smiling ()
 
-Getter for the smiling attribute
+Getter for the 'smiling' attribute
 
 =cut
 
@@ -243,9 +235,9 @@ sub smiling {
     return $self->{'smiling'};
 }
 
-=head2 tid
+=head2 tid ()
 
-Getter for the tid attribute
+Getter for the 'tid' attribute
 
 =cut
 
@@ -255,9 +247,9 @@ sub tid {
     return $self->{'tid'};
 }
 
-=head2 mood
+=head2 mood ()
 
-Getter for the mood attribute
+Getter for the 'mood' attribute
 
 =cut
 
@@ -267,9 +259,9 @@ sub mood {
     return $self->{'mood'};
 }
 
-=head2 lips
+=head2 lips ()
 
-Getter for the lips attribute
+Getter for the 'lips' attribute
 
 =cut
 
@@ -279,9 +271,9 @@ sub lips {
     return $self->{'lips'};
 }
 
-=head2 face
+=head2 face ()
 
-Getter for the face attribute
+Getter for the 'face' attribute
 
 =cut
 
@@ -291,9 +283,9 @@ sub face {
     return $self->{'face'};
 }
 
-=head2 recognizable
+=head2 recognizable ()
 
-Getter for the recognizable attribute
+Getter for the 'recognizable' attribute
 
 =cut
 
@@ -303,9 +295,9 @@ sub recognizable {
     return $self->{'recognizable'};
 }
 
-=head2 uids
+=head2 uids ()
 
-Getter for the uids attribute
+Getter for the 'uids' attribute
 
 =cut
 
@@ -315,9 +307,10 @@ sub uids {
     return $self->{'uids'};
 }
 
-=head2 recognized
+=head2 recognized ()
 
-Retur the uid of the recognized user
+Return the uid of the recognized user
+(undef if no user recognized)
 
 =cut
 
@@ -330,7 +323,6 @@ sub recognized {
     else {
         return;
     }
-    return $self->{'recognize'};
 }
 
 =head1 AUTHOR
@@ -339,12 +331,9 @@ Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-face-client at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Face-Client>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C< arhuman at gmail.com>, or through
+the web interface at L<https://github.com/arhuman/Face-Client/issues>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 
@@ -352,14 +341,13 @@ You can find documentation for this module with the perldoc command.
 
     perldoc Face::Client
 
-
 You can also look for information at:
 
 =over 4
 
-=item * RT: CPAN's request tracker (report bugs here)
+=item * Github repository
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Face-Client>
+L<https://github.com/arhuman/Face-Client>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
@@ -369,15 +357,16 @@ L<http://annocpan.org/dist/Face-Client>
 
 L<http://cpanratings.perl.org/d/Face-Client>
 
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Face-Client/>
-
 =back
 
+More information about Face.com service :
+
+L<http://developers.face.com/docs/api>
 
 =head1 ACKNOWLEDGEMENTS
 
+Thanks to Face.com for the service they provide.
+Thanks to Jaguar Network for allowing me to publish my work.
 
 =head1 LICENSE AND COPYRIGHT
 
@@ -389,7 +378,6 @@ by the Free Software Foundation; or the Artistic License.
 
 See http://dev.perl.org/licenses/ for more information.
 
-
 =cut
 
-1;    # End of Face::Client
+1; 

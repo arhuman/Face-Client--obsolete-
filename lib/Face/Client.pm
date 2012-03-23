@@ -18,37 +18,74 @@ Face::Client - Client to the Face.com REST API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =cut
 
-our $VERSION = '0_02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
-Face::Client encapsulates Face.com REST API.
+    ******************* Caution : Work in progress !!! ******************
 
-Perhaps a little code snippet.
+    The API isn't fully covered, the module is barely usable yet.
 
-    use Face::Client;
+    API change : All params now passed through hashref (for consistency)
 
-    my $foo = Face::Client->new();
-    ...
+        faces_xxxt() methods 
+        tags_xxx() methods 
+        account_xxx() methods 
+        
+    now require a hashref as parameter
 
-=head1 EXPORT
+    *********************************************************************
 
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
+This module aims to provide a high-level interface to
+the Face.com face recognition REST API.
+
+
+Face recognition scenario :
+
+    # First submit pictures
+    @tags = $client->faces_detect(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg,http://media.linkedin.com/mpr/pub/image-ydXbyfluDqrF4odQH8fDyBF07ONcpJdQHNaYyXk1s4K8Dk6Q/kevin-polizzi.jpg,http://experts-it.fr/files/2011/01/Jaguar-Kevin-Polizzi.jpg,http://www.jaguar-network.com/jn/templates/images/img57.jpg");
+    
+    # Then save the tags id with the associated user id
+    my $ids = join ",", map {$_->tid} @tags;
+    my @st = $client->tags_save(tids => $ids,uid => 'kevin.polizzi@face-client-perl');
+
+    # Train for the use
+    $client->faces_train(uids => 'kevin.polizzi@face-client-perl');
+
+    # From now on, you can try to recognize user on urL
+    @tags = $client->faces_recognize(urls => "http://img.clubic.com/03520176-photo-kevin-polizzi-fondateur-jaguar-network.jpg", uids => 'kevin.polizzi@face-client-perl');
+    if ($tags[0]->recognized) {
+        ... 
+    }
+
+For more information about the API see :
+
+http://developers.face.com/docs/recognition-howto/
+http://developers.face.com/docs/api/faces-detect/
+http://developers.face.com/docs/api/tags-save/
+http://developers.face.com/docs/api/faces-train/
+http://developers.face.com/docs/api/faces-recognize/
 
 =head1 SUBROUTINES/METHODS
 
-=head2 new
+=head2 new ( \%params )
+
+Constructor for the Face::Client class
+
+Valid keys for %params are currently :
+    server          Server providing the REST service (default to 'http://api.face.com')
+    api_key         Credential to be used while connecting to the Face's service (see: http://developers.face.com/account/)
+    api_secret      Credential to be used while connecting to the Face's service (see: http://developers.face.com/account/)
 
 =cut
 
 sub new {
     my $class  = shift;
-    my $params = shift;
+    my $params = shift || {};
 
     my $self = bless {}, $class;
     $self->{server}     = 'http://api.face.com';
@@ -83,7 +120,7 @@ sub new {
     return $self;
 }
 
-=head2 faces_detect
+=head2 faces_detect ( \%params )
 
 Returns tags for detected faces in one or more photos, with geometric information of the tag, eyes, nose and mouth, as well as various attributes such as gender, is wearing glasses, and is smiling.
 
@@ -95,19 +132,19 @@ More information : http://developers.face.com/docs/api/faces-detect/
 
 sub faces_detect {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     return $self->_process_response( 'GET',
-        "/faces/detect.json?" . $self->_get_url() . $parameters );
+        "/faces/detect.json?" . $self->_get_credential_parameters() . $parameters );
 }
 
-=head2 faces_train
+=head2 faces_train ( \%params )
 
 Calls the training procedure for the specified UIDs, and reports back changes.
 
@@ -119,19 +156,19 @@ More information : http://developers.face.com/docs/api/faces-train/
 
 sub faces_train {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     return $self->_process_response( 'GET',
-        "/faces/train.json?" . $self->_get_url() . $parameters );
+        "/faces/train.json?" . $self->_get_credential_parameters() . $parameters );
 }
 
-=head2 faces_recognize
+=head2 faces_recognize ( \%params )
 
 Attempts to detect and recognize one or more user IDs' faces, in one or more photos. For each detected face, the face.com engine will return the most likely user IDs, or empty result for unrecognized faces. In addition, each tag includes a threshold score - any score below this number is considered a low-probability hit.
 
@@ -149,19 +186,19 @@ More information : http://developers.face.com/docs/api/faces-recognize/
 
 sub faces_recognize {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     return $self->_process_response( 'GET',
-        "/faces/recognize.json?" . $self->_get_url() . $parameters );
+        "/faces/recognize.json?" . $self->_get_credential_parameters() . $parameters );
 }
 
-=head2 faces_status
+=head2 faces_status ( \%params )
 
 Reports training set status for the specified UIDs.
 
@@ -173,19 +210,19 @@ More information : http://developers.face.com/docs/api/faces-status/
 
 sub faces_status {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     return $self->_process_response( 'GET',
-        "/faces/status.json?" . $self->_get_url() . $parameters );
+        "/faces/status.json?" . $self->_get_credential_parameters() . $parameters );
 }
 
-=head2 tags_add
+=head2 tags_add ( \%params )
 
 Add a (manual) face tag to a photo. Use this method to add face tags where those were not detected for completeness of your service. Manual tags are treated like automatic tags, except they are not used to train the system how a user looks like. See the tags.save method to learn how to save automatic face tags for recognition purposes.
 
@@ -195,19 +232,19 @@ More information : http://developers.face.com/docs/api/tags-add/
 
 sub tags_add {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     return $self->_process_response( 'GET',
-        "/tags/add.json?" . $self->_get_url() . $parameters );
+        "/tags/add.json?" . $self->_get_credential_parameters() . $parameters );
 }
 
-=head2 tags_remove
+=head2 tags_remove ( \%params )
 
 Remove a previously saved face tag from a photo.
 
@@ -217,19 +254,19 @@ More information : http://developers.face.com/docs/api/tags-remove/
 
 sub tags_remove {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     return $self->_process_response( 'GET',
-        "/tags/remove.json?" . $self->_get_url() . $parameters );
+        "/tags/remove.json?" . $self->_get_credential_parameters() . $parameters );
 }
 
-=head2 tags_get
+=head2 tags_get ( \%params )
 
 Returns saved tags in one or more photos, or for the specified User ID(s). This method also accepts multiple filters for finding tags corresponding to a more specific criteria such as front-facing, recent, or where two or more users appear together in same photos.
 
@@ -241,19 +278,19 @@ More information : http://developers.face.com/docs/api/tags-get/
 
 sub tags_get {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift;
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     return $self->_process_response( 'GET',
-        "/tags/get.json?" . $self->_get_url() . $parameters );
+        "/tags/get.json?" . $self->_get_credential_parameters() . $parameters );
 }
 
-=head2 tags_save
+=head2 tags_save ( \%params )
 
 Saves a face tag. Use this method to save tags for training the face.com index, or for future use of the faces.detect and tags.get methods.
 
@@ -265,20 +302,20 @@ More information : http://developers.face.com/docs/api/tags-save/
 
 sub tags_save {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
-    $self->_process_response( 'GET', "/tags/save.json?" . $self->_get_url() . $parameters );
+    $self->_process_response( 'GET', "/tags/save.json?" . $self->_get_credential_parameters() . $parameters );
 
     return $self->response->saved_tags;
 }
 
-=head2 account_limits
+=head2 account_limits ( \%params )
 
 Returns current rate limits for the account represented by the passed API key and Secret.
 
@@ -288,21 +325,21 @@ More information : http://developers.face.com/docs/api/account-limits/
 
 sub account_limits {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     $self->_process_response( 'GET',
-        "/account/limits.json?" . $self->_get_url() . $parameters );
+        "/account/limits.json?" . $self->_get_credential_parameters() . $parameters );
 
     return $self->response->account;
 }
 
-=head2 account_users
+=head2 account_users ( \%params )
 
 Returns current users registered in the account's private namespaces. Users in a private namespace get registered implicitly through tags.save calls.
 
@@ -312,21 +349,21 @@ More information : http://developers.face.com/docs/api/account-users/
 
 sub account_users {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     $self->_process_response( 'GET',
-        "/account/users.json?" . $self->_get_url() . $parameters );
+        "/account/users.json?" . $self->_get_credential_parameters() . $parameters );
 
     return $self->response->account->users;
 }
 
-=head2 account_namespaces
+=head2 account_namespaces ( \%params )
 
 Returns all authorized namespaces that given api_key can use with the API.
 
@@ -342,25 +379,27 @@ More information : http://developers.face.com/docs/api/account-namespaces/
 
 sub account_namespaces {
     my $self   = shift;
-    my %params = @_;
+    my $params = shift || {};
 
     my $parameters = '';
 
-    for my $key ( keys %params ) {
-        $parameters .= "&$key=" . $params{$key};
+    for my $key ( keys %$params ) {
+        $parameters .= "&$key=" . $params->{$key};
     }
 
     $self->_process_response( 'GET',
-        "/account/namespaces.json?" . $self->_get_url() . $parameters );
+        "/account/namespaces.json?" . $self->_get_credential_parameters() . $parameters );
 
     return $self->response->account->namespaces;
 }
 
-=head2 _get_url
+=head2 _get_credential_parameters ()
+
+Return the query string part with credentials api_key and api_secret
 
 =cut
 
-sub _get_url {
+sub _get_credential_parameters {
     my $self = shift;
 
     return
@@ -370,7 +409,11 @@ sub _get_url {
       . $self->{api_secret};
 }
 
-=head2 _process_response
+=head2 _process_response ( $method, $url )
+
+Query a remote URL and process the server's response (json) and convert it to a Face::Client::Response object
+
+Currently only GET method is handled
 
 =cut
 
@@ -402,7 +445,9 @@ sub _process_response {
     return @tags;
 }
 
-=head2 response
+=head2 response ()
+
+Getter for the 'response' attribute
 
 =cut
 
@@ -418,10 +463,9 @@ Arnaud (Arhuman) ASSAD, C<< <arhuman at gmail.com> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-face-client at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Face-Client>.  I will be notified, and then you'll
+Please report any bugs or feature requests to C< arhuman at gmail.com>, or through
+the web interface at L<https://github.com/arhuman/Face-Client/issues>.  I will be notified, and then you'll
 automatically be notified of progress on your bug as I make changes.
-
 
 =head1 SUPPORT
 
@@ -429,12 +473,11 @@ You can find documentation for this module with the perldoc command.
 
     perldoc Face::Client
 
-
 You can also look for information at:
 
 =over 4
 
-=item * Github (report bugs here)
+=item * Github repository
 
 L<https://github.com/arhuman/Face-Client>
 
@@ -442,12 +485,15 @@ L<https://github.com/arhuman/Face-Client>
 
 L<http://annocpan.org/dist/Face-Client>
 
+=item * CPAN Ratings
+
+L<http://cpanratings.perl.org/d/Face-Client>
+
 =back
 
 More information about Face.com service :
 
 L<http://developers.face.com/docs/api>
-
 
 =head1 ACKNOWLEDGEMENTS
 
@@ -464,7 +510,6 @@ by the Free Software Foundation; or the Artistic License.
 
 See http://dev.perl.org/licenses/ for more information.
 
-
 =cut
 
-1;    # End of Face::Client
+1;
